@@ -1,53 +1,93 @@
-# **Shibboleth SELinux Policy**
+# Shibboleth SELinux Policy
 
-This project provides an SELinux policy for the Shibboleth daemon (shibd) to ensure it operates securely in an SELinux-enforced environment.
+This repository contains the SELinux policy for the Shibboleth daemon (`shibd`). This policy is designed to enhance the security of the Shibboleth Identity Provider service by applying Mandatory Access Control (MAC) using SELinux.
 
-The policy restricts access for the Shibboleth process to its configuration files, PID files, cache, and logs, enforcing the principle of least privilege.
+## Installation
 
-## **File Contents**
+### From Source
 
-* **shibboleth.te**: The policy source file defining SELinux types and rules for the Shibboleth daemon.
-* **shibboleth.fc**: The file defining SELinux file contexts for files and directories related to Shibboleth.
-* **shibboleth\_selinux.8**: The man page for this SELinux policy.
-* **shibboleth-selinux.spec**: The SPEC file used to build this policy as an RPM package.
+To build and install the policy from source, follow these steps:
 
-## **Installation**
+1.  **Clone the repository:**
+    ```sh
+    git clone [https://github.com/orrisroot/shibboleth-selinux.git](https://github.com/orrisroot/shibboleth-selinux.git)
+    cd shibboleth-selinux
+    ```
 
-### **Prerequisites**
+2.  **Build the policy module:**
+    ```sh
+    make -f /usr/share/selinux/devel/Makefile
+    ```
 
-To build and install this policy, you need the following packages:
+3.  **Install the policy module:**
+    ```sh
+    sudo semodule -i shibboleth.pp
+    ```
 
-* selinux-policy-devel
-* policycoreutils
-* rpm-build
+4.  **Apply file contexts:**
+    ```sh
+    sudo restorecon -Rv /etc/shibboleth /var/cache/shibboleth /var/log/shibboleth /var/run/shibboleth /usr/sbin/shibd /usr/lib/systemd/system/shibd.service
+    ```
 
-You can install these packages using the following command:
+### Using RPM
 
-sudo dnf install selinux-policy-devel policycoreutils rpm-build
+To create and install an RPM package, you must first ensure the source files are correctly structured.
 
-### **Build and Install**
+1.  **Create the source directory structure:**
+    The `shibboleth-selinux.spec` file expects the source tarball to contain a top-level directory named `shibboleth-selinux-1.0.0/`.
 
-1. Place all the files listed above in a single directory.
-2. Create a tar.gz archive of the source files.
-   tar \-czvf shibboleth-selinux-1.0.0.tar.gz shibboleth.te shibboleth.fc shibboleth\_selinux.8 shibboleth-selinux.spec
+2.  **Create the source tarball:**
+    ```sh
+    # Create the source directory and copy all necessary source files into it
+    mkdir -p shibboleth-selinux-1.0.0
+    cp shibboleth.te shibboleth.fc shibboleth-selinux.man shibboleth-selinux.spec README.md shibboleth-selinux-1.0.0/
+    
+    # Create the tarball from the top-level directory
+    tar -czvf shibboleth-selinux-1.0.0.tar.gz shibboleth-selinux-1.0.0/
+    ```
 
-3. Create the SRPM (Source RPM).
-   rpmbuild \-ts shibboleth-selinux-1.0.0.tar.gz
+3.  **Build the RPM package:**
+    ```sh
+    # You will need to move the tarball to your RPM build directory
+    cp shibboleth-selinux-1.0.0.tar.gz ~/rpmbuild/SOURCES/
+    
+    # Build the RPM
+    rpmbuild -ba shibboleth-selinux.spec
+    ```
 
-4. Build the RPM from the SRPM.
-   rpmbuild \-bb \~/rpmbuild/SPECS/shibboleth-selinux.spec
+4.  **Install the RPM package:**
+    The resulting RPM will be located in `~/rpmbuild/RPMS/noarch/`.
+    ```sh
+    sudo yum localinstall ~/rpmbuild/RPMS/noarch/shibboleth-selinux-1.0.0-1.el7.noarch.rpm
+    ```
+    *(Note: Adjust the package name and path according to your system and build environment.)*
 
-5. Install the generated RPM.
-   sudo rpm \-ivh \~/rpmbuild/RPMS/noarch/shibboleth-selinux-1.0.0-1.el8.noarch.rpm
+## Usage
 
-### **Policy Auto-Loading**
+Once the policy is installed, the `shibd` service will run in the `shibboleth_t` domain, providing enhanced security.
 
-When the RPM package is installed on a system with SELinux enabled, the policy is automatically loaded, and the file contexts for related files are updated.
+## Troubleshooting
 
-## **License**
+If you encounter SELinux denials (AVC messages) in your system logs, you can use the `audit2allow` tool to generate a permissive rule.
 
-This project is distributed under the GPLv2+ license.
+1.  **Install the `setroubleshoot-server` and `policycoreutils-devel` packages:**
+    ```sh
+    sudo yum install setroubleshoot-server policycoreutils-devel
+    ```
 
-## **Copyright**
+2.  **Generate a new policy module from audit logs:**
+    ```sh
+    grep "shibd" /var/log/audit/audit.log | audit2allow -M my-shibboleth-policy
+    ```
+    This will create `my-shibboleth-policy.te` and `my-shibboleth-policy.pp` files.
 
-Copyright (C) 2025 Yoshihiro OKUMURA
+3.  **Review and install the new policy:**
+    Review the `.te` file to ensure the rules are what you expect, then install it.
+    ```sh
+    sudo semodule -i my-shibboleth-policy.pp
+    ```
+
+## Contributing
+
+We welcome contributions to this project. Please submit bug reports or pull requests via GitHub.
+
