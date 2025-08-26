@@ -48,7 +48,7 @@ rm -rf %{buildroot} %{pakage_prefix}.pp
 /usr/sbin/semodule -n -i %{_datadir}/selinux/packages/%{package_name}.pp
 if /usr/sbin/selinuxenabled; then
     /usr/sbin/load_policy || :
-    /sbin/restorecon -R /usr/bin/shibd || :
+    /sbin/restorecon -R /usr/sbin/shibd || :
     /sbin/restorecon -R /usr/lib/systemd/system/shibd.service || :
     /sbin/restorecon -R /etc/shibboleth || :
     /sbin/restorecon -R /run/shibboleth || :
@@ -63,7 +63,7 @@ if [ $1 -eq 0 ]; then
     /usr/sbin/semodule -n -r %{package_name}
     if /usr/sbin/selinuxenabled; then
         /usr/sbin/load_policy || :
-        /sbin/restorecon -R /usr/bin/shibd || :
+        /sbin/restorecon -R /usr/sbin/shibd || :
         /sbin/restorecon -R /usr/lib/systemd/system/shibd.service || :
         /sbin/restorecon -R /etc/shibboleth || :
         /sbin/restorecon -R /run/shibboleth || :
