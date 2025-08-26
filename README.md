@@ -10,7 +10,7 @@ To build and install the policy from source, follow these steps:
 
 1.  **Clone the repository:**
     ```sh
-    git clone [https://github.com/orrisroot/shibboleth-selinux.git](https://github.com/orrisroot/shibboleth-selinux.git)
+    git clone https://github.com/orrisroot/shibboleth-selinux.git
     cd shibboleth-selinux
     ```
 
@@ -40,7 +40,7 @@ To create and install an RPM package, you must first ensure the source files are
     ```sh
     # Create the source directory and copy all necessary source files into it
     mkdir -p shibboleth-selinux-1.0.0
-    cp shibboleth.te shibboleth.fc shibboleth-selinux.man shibboleth-selinux.spec README.md shibboleth-selinux-1.0.0/
+    cp shibboleth.te shibboleth.fc shibboleth-selinux.8 shibboleth-selinux.spec LICENSE README.md shibboleth-selinux-1.0.0/
     
     # Create the tarball from the top-level directory
     tar -czvf shibboleth-selinux-1.0.0.tar.gz shibboleth-selinux-1.0.0/
