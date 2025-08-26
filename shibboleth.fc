@@ -1,0 +1,7 @@
+/usr/sbin/shibd		--	gen_context(system_u:object_r:shibboleth_exec_t,s0)
+/usr/lib/systemd/system/shibd\.service	--	gen_context(system_u:object_r:shibboleth_unit_file_t,s0)
+/etc/shibboleth(/.*)?		gen_context(system_u:object_r:shibboleth_config_t,s0)
+/run/shibboleth(/.*)?		gen_context(system_u:object_r:shibboleth_run_t,s0)
+/var/cache/shibboleth(/.*)?	gen_context(system_u:object_r:shibboleth_cache_t,s0)
+/var/log/shibboleth(/.*)?	gen_context(system_u:object_r:shibboleth_log_t,s0)
+

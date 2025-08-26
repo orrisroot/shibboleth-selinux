@@ -1,0 +1,89 @@
+# The policy_module macro declares the name of the module and its version.
+# This is a key part of the modern SELinux policy language.
+policy_module(shibboleth, 1.0.0)
+
+# gen_require ensures that the necessary types from other modules are
+# available for our policy. This is equivalent to require statements.
+gen_require(`
+    type kernel_t;
+    type httpd_t;
+')
+
+########################################
+#
+# Declarations
+#
+# This section declares the custom types used in the policy.
+# These types are used to label processes, files, and directories.
+#
+
+# Domain and executable file for the shibboleth daemon
+type shibboleth_t;
+type shibboleth_exec_t;
+init_daemon_domain(shibboleth_t, shibboleth_exec_t)
+
+# Unit file type for systemd service
+type shibboleth_unit_file_t;
+systemd_unit_file(shibboleth_unit_file_t)
+
+# Configuration file type
+type shibboleth_config_t;
+files_config_file(shibboleth_config_t)
+
+# PID file type
+type shibboleth_run_t;
+files_pid_file(shibboleth_run_t)
+
+# Cache directory and file type
+type shibboleth_cache_t;
+files_type(shibboleth_cache_t)
+
+# Log directory and file type
+type shibboleth_log_t;
+logging_log_file(shibboleth_log_t)
+
+########################################
+#
+# Shibboleth Local Policy
+#
+# This section defines the actual access permission rules between the
+# shibboleth domain and other domains.
+#
+
+# Permissions for the daemon itself
+allow shibboleth_t self:capability { setgid setuid };
+allow shibboleth_t self:process { fork signal_perms };
+allow shibboleth_t self:fifo_file rw_fifo_file_perms;
+allow shibboleth_t self:unix_dgram_socket create_socket_perms;
+allow shibboleth_t kernel_t:unix_dgram_socket sendto;
+domain_use_interactive_fds(shibboleth_t)
+
+# Other common rules
+files_read_etc_files(shibboleth_t)
+auth_use_nsswitch(shibboleth_t)
+miscfiles_read_localization(shibboleth_t)
+corenet_tcp_connect_http_port(shibboleth_t)
+corenet_tcp_sendrecv_http_port(shibboleth_t)
+
+# Permissions for shibboleth to access its own files
+allow shibboleth_t shibboleth_config_t:dir search;
+allow shibboleth_t shibboleth_config_t:file { getattr open read };
+
+# Permissions for shibboleth to manage its runtime files (e.g., PID files)
+allow shibboleth_t shibboleth_run_t:dir { search write add_name remove_name };
+allow shibboleth_t shibboleth_run_t:file { read write create setattr unlink };
+allow shibboleth_t shibboleth_run_t:sock_file { create setattr unlink };
+
+# Permissions for shibboleth to manage its cache
+allow shibboleth_t shibboleth_cache_t:dir { search write add_name };
+allow shibboleth_t shibboleth_cache_t:file { read write create setattr unlink };
+
+# Permissions for shibboleth to manage its log files
+allow shibboleth_t shibboleth_log_t:dir { search write add_name };
+allow shibboleth_t shibboleth_log_t:file { write append create setattr };
+
+# Permissions for httpd to access shibboleth files
+allow httpd_t shibboleth_config_t:file { getattr open read };
+allow httpd_t shibboleth_cache_t:file { open read };
+allow httpd_t shibboleth_t:unix_stream_socket connectto;
+allow httpd_t shibboleth_run_t:sock_file write;
