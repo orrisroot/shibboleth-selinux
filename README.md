@@ -58,7 +58,7 @@ To create and install an RPM package, you must first ensure the source files are
 4.  **Install the RPM package:**
     The resulting RPM will be located in `~/rpmbuild/RPMS/noarch/`.
     ```sh
-    sudo yum localinstall ~/rpmbuild/RPMS/noarch/shibboleth-selinux-1.0.0-1.el7.noarch.rpm
+    sudo dnf localinstall ~/rpmbuild/RPMS/noarch/shibboleth-selinux-1.0.0-1.el10.noarch.rpm
     ```
     *(Note: Adjust the package name and path according to your system and build environment.)*
 
