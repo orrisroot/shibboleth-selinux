@@ -10,6 +10,8 @@ License:        GPLv2+
 BuildArch:      noarch
 Source0:        %{name}-%{version}.tar.gz
 BuildRequires:  selinux-policy-devel
+Requires:       selinux-policy-targeted
+Requires:       selinux-policy
 Requires:       policycoreutils
 Requires:       shibboleth
 
