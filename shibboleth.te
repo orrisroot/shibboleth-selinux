@@ -66,24 +66,30 @@ corenet_tcp_connect_http_port(shibboleth_t)
 corenet_tcp_sendrecv_http_port(shibboleth_t)
 
 # Permissions for shibboleth to access its own files
-allow shibboleth_t shibboleth_config_t:dir search;
-allow shibboleth_t shibboleth_config_t:file { getattr open read };
+allow shibboleth_t shibboleth_config_t:dir list_dir_perms;
+allow shibboleth_t shibboleth_config_t:file read_file_perms;
+allow shibboleth_t shibboleth_config_t:lnk_file read_lnk_file_perms;
 
 # Permissions for shibboleth to manage its runtime files (e.g., PID files)
-allow shibboleth_t shibboleth_run_t:dir { search write add_name remove_name };
-allow shibboleth_t shibboleth_run_t:file { read write create setattr unlink };
-allow shibboleth_t shibboleth_run_t:sock_file { create setattr unlink };
+manage_dirs_pattern(shibboleth_t, shibboleth_run_t, shibboleth_run_t)
+manage_files_pattern(shibboleth_t, shibboleth_run_t, shibboleth_run_t)
+manage_sock_files_pattern(shibboleth_t, shibboleth_run_t, shibboleth_run_t)
+files_pid_filetrans(shibboleth_t, shibboleth_run_t, { dir file sock_file })
 
 # Permissions for shibboleth to manage its cache
-allow shibboleth_t shibboleth_cache_t:dir { search write add_name };
-allow shibboleth_t shibboleth_cache_t:file { read write create setattr unlink };
+manage_dirs_pattern(shibboleth_t, shibboleth_cache_t, shibboleth_cache_t)
+manage_files_pattern(shibboleth_t, shibboleth_cache_t, shibboleth_cache_t)
+files_var_filetrans(shibboleth_t, shibboleth_cache_t, { file dir })
 
 # Permissions for shibboleth to manage its log files
-allow shibboleth_t shibboleth_log_t:dir { search write add_name };
-allow shibboleth_t shibboleth_log_t:file { write append create setattr };
+manage_dirs_pattern(shibboleth_t, shibboleth_log_t, shibboleth_log_t)
+manage_files_pattern(shibboleth_t, shibboleth_log_t, shibboleth_log_t)
+manage_lnk_files_pattern(shibboleth_t, shibboleth_log_t, shibboleth_log_t)
+logging_log_filetrans(shibboleth_t, shibboleth_log_t, { file dir })
 
 # Permissions for httpd to access shibboleth files
-allow httpd_t shibboleth_config_t:file { getattr open read };
-allow httpd_t shibboleth_cache_t:file { open read };
+allow httpd_t shibboleth_config_t:file read_file_perms;
+allow httpd_t shibboleth_config_t:lnk_file read_lnk_file_perms;
+allow httpd_t shibboleth_cache_t:file read_file_perms;
 allow httpd_t shibboleth_t:unix_stream_socket connectto;
 allow httpd_t shibboleth_run_t:sock_file write;
