@@ -1,4 +1,4 @@
-%global shibboleth_policy_version 1.0.0
+%global shibboleth_policy_version 1.0.1
 %global package_name shibboleth
 
 Name:           %{package_name}-selinux
@@ -76,5 +76,10 @@ fi
 exit 0
 
 %changelog
+* Wed Dec 11 2024 Yoshihiro OKUMURA <orrisroot@gmail.com> - 1.0.1-1
+- Fixed executable path from /usr/bin/shibd to /usr/sbin/shibd
+- Added permission for httpd to connect to shibboleth Unix socket
+- Improved socket file management permissions
+
 * Tue Aug 26 2025 Yoshihiro OKUMURA <orrisroot@gmail.com> - 1.0.0-1
 - Initial RPM package for Shibboleth SELinux policy

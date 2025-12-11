@@ -1,6 +1,6 @@
 # The policy_module macro declares the name of the module and its version.
 # This is a key part of the modern SELinux policy language.
-policy_module(shibboleth, 1.0.0)
+policy_module(shibboleth, 1.0.1)
 
 # gen_require ensures that the necessary types from other modules are
 # available for our policy. This is equivalent to require statements.
@@ -55,6 +55,7 @@ allow shibboleth_t self:capability { setgid setuid };
 allow shibboleth_t self:process { fork signal_perms };
 allow shibboleth_t self:fifo_file rw_fifo_file_perms;
 allow shibboleth_t self:unix_dgram_socket create_socket_perms;
+allow shibboleth_t self:unix_stream_socket { create_stream_socket_perms listen };
 allow shibboleth_t kernel_t:unix_dgram_socket sendto;
 domain_use_interactive_fds(shibboleth_t)
 

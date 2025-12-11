@@ -26,7 +26,7 @@ To build and install the policy from source, follow these steps:
 
 4.  **Apply file contexts:**
     ```sh
-    sudo restorecon -Rv /etc/shibboleth /var/cache/shibboleth /var/log/shibboleth /var/run/shibboleth /usr/sbin/shibd /usr/lib/systemd/system/shibd.service
+    sudo restorecon -Rv /etc/shibboleth /var/cache/shibboleth /var/log/shibboleth /run/shibboleth /usr/sbin/shibd /usr/lib/systemd/system/shibd.service
     ```
 
 ### Using RPM
@@ -39,17 +39,17 @@ To create and install an RPM package, you must first ensure the source files are
 2.  **Create the source tarball:**
     ```sh
     # Create the source directory and copy all necessary source files into it
-    mkdir -p shibboleth-selinux-1.0.0
-    cp shibboleth.te shibboleth.fc shibboleth-selinux.8 shibboleth-selinux.spec LICENSE README.md shibboleth-selinux-1.0.0/
+    mkdir -p shibboleth-selinux-1.0.1
+    cp shibboleth.te shibboleth.fc shibboleth-selinux.8 shibboleth-selinux.spec LICENSE README.md shibboleth-selinux-1.0.1/
     
     # Create the tarball from the top-level directory
-    tar -czvf shibboleth-selinux-1.0.0.tar.gz shibboleth-selinux-1.0.0/
+    tar -czvf shibboleth-selinux-1.0.1.tar.gz shibboleth-selinux-1.0.1/
     ```
 
 3.  **Build the RPM package:**
     ```sh
     # You will need to move the tarball to your RPM build directory
-    cp shibboleth-selinux-1.0.0.tar.gz ~/rpmbuild/SOURCES/
+    cp shibboleth-selinux-1.0.1.tar.gz ~/rpmbuild/SOURCES/
     
     # Build the RPM
     rpmbuild -ba shibboleth-selinux.spec
@@ -58,7 +58,7 @@ To create and install an RPM package, you must first ensure the source files are
 4.  **Install the RPM package:**
     The resulting RPM will be located in `~/rpmbuild/RPMS/noarch/`.
     ```sh
-    sudo dnf localinstall ~/rpmbuild/RPMS/noarch/shibboleth-selinux-1.0.0-1.el10.noarch.rpm
+    sudo dnf localinstall ~/rpmbuild/RPMS/noarch/shibboleth-selinux-1.0.1-1.el10.noarch.rpm
     ```
     *(Note: Adjust the package name and path according to your system and build environment.)*
 
