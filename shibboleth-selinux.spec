@@ -76,8 +76,8 @@ fi
 exit 0
 
 %changelog
-* Wed Dec 11 2024 Yoshihiro OKUMURA <orrisroot@gmail.com> - 1.0.1-1
-- Fixed executable path from /usr/bin/shibd to /usr/sbin/shibd
+* Thu Dec 11 2025 Yoshihiro OKUMURA <orrisroot@gmail.com> - 1.0.1-1
+- Fixed executable path from /usr/sbin/shibd to /usr/bin/shibd
 - Added permission for httpd to connect to shibboleth Unix socket
 - Improved socket file management permissions
 
